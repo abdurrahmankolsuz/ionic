@@ -14,19 +14,22 @@ export class HomePage {
   map: any;
   address;
   geo;
+  cityCircle;
+  citymap;
   constructor(public navCtrl: NavController, private modalCtrl: ModalController) {
     this.address = {
       place: ''
     };
     this.geo = {
       lat: 39.925533,
-      long: 32.866287
+      lang: 32.866287
     }
 
   }
 
   ionViewDidLoad() {
-    this.initMap(this.geo.lat, this.geo.long);
+    this.initMap(this.geo.lat, this.geo.lang);
+    
   }
 
   showAddressModal() {
@@ -40,17 +43,34 @@ export class HomePage {
   }
 
 
-  initMap(lat: any, long: any) {
+  initMap(lat: any, lang: any) {
 
-    let latLng = new google.maps.LatLng(lat, long);
+    let latLng = new google.maps.LatLng(lat, lang);
     let mapOptions = {
       center: latLng,
-      zoom: 10,
+      zoom: 15,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
     this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions)
-  }
 
+
+    var rectangle = new google.maps.Rectangle({
+      strokeColor: '#FF0000',
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: '#FF0000',
+      fillOpacity: 0.35,
+      map: this.map,
+      bounds: {
+        north: 33.685,
+        south: 33.671,
+        east: -116.234,
+        west: -116.251
+      },
+      editable: true
+    });
+
+  }
 
   //convert Address string to lat and long
   geoCode(address: any) {
@@ -58,7 +78,7 @@ export class HomePage {
     geocoder.geocode({ 'address': address.place }, (results, status) => {
       this.geo.lat = results[0].geometry.location.lat();
       this.geo.lang = results[0].geometry.location.lng();
-      this.initMap(this.geo.lat, this.geo.long);
+      this.initMap(this.geo.lat, this.geo.lang);
       this.addMarker();
     });
   }
